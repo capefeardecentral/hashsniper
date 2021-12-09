@@ -1,0 +1,16 @@
+{
+  "name": "hashsniper",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "cli tool for buying off of fxhash",
+  "main": "hashsniper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@taquito/signer": "^11.0.2",
+    "@taquito/taquito": "^11.0.2"
+  }
+}
