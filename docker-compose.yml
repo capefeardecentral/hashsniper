@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  hashsniper:
+    container_name: hs
+    build: .
+    command: ["tail", "-f", "/dev/null"]
+    environment:
+      TEZOS_PKH: "$TEZOS_PKH"

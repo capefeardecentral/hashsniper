@@ -13,11 +13,13 @@ tezos.contract
     .at('KT1AEVuykWeuuFX7QkEAMNtffzwhe1Z98hJS')
     .then((contract) => {
         console.log("sending contract call")
+        console.log("artist wallet: " + artistWallet)
+        console.log("mint index: " + mintIndex)
+        console.log("price: " + amount)
         return contract.methodsObject.mint({
             issuer_address: artistWallet,
             issuer_id: mintIndex,
-            amount: amount
-        }).send()
+        }).send({amount: amount})
     }).then((op) => {
         console.log(`Awaiting for ${op.hash} to be confirmed...`);
         return op.confirmation().then(() => op.hash);
