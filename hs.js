@@ -1,31 +1,26 @@
+import fetch from "node-fetch";
+import readline from "readline";
 import { TezosToolkit } from "@taquito/taquito";
 import { InMemorySigner } from "@taquito/signer";
-import { request, gql } from "graphql-request";
-import * as readline from "readline";
 
-const rpc = process.env.TEZOS_RPC || "https://mainnet.api.tez.ie"
+const rpc = process.env.TEZOS_RPC || "https://mainnet.smartpy.io"
 const tezos = new TezosToolkit(rpc)
 tezos.setProvider({signer: await InMemorySigner.fromSecretKey(process.env.TEZOS_PKH)})
 const args = process.argv.slice(2)
 const mintIndex = args[0]
 
 async function getTokenInfo(tokenId) {
-    const query = gql`
-    {
-        generativeTokensByIds(ids: ${tokenId}) {
-            id,
-            name,
-            balance,
-            price,
-            enabled,
-            author {
-                id,
-                name
-            }
-        }
-    }
-    `
-    return request('https://api.fxhash.xyz/graphql', query)
+    let tokenInfo
+    // pull last 150 tokens
+    await fetch("https://api.tzkt.io/v1/bigmaps/22781/keys?sort.desc=id&select=value%2Ckey&limit=150")
+        .then((data => data.json()))
+        .then((data) => {
+            const head = data[0].key.nat
+            const diff = head - tokenId
+            tokenInfo = data[diff]
+        })
+
+    return tokenInfo
 }
 
 function askContinue(query) {
@@ -41,24 +36,23 @@ function askContinue(query) {
 }
 
 async function validateMint(data) {
-    // if (!data.enabled) {
-    //     console.log("token not enabled yet")
-    //     return false
-    // }
-    const query = `Token_id: ${data.id} \nName: ${data.name} \nPrice: ${data.price} \nAuthor: ${data.author.name} \nWallet: ${data.author.id} \nPress y to continue \n`
+    if (!data.value.enabled) {
+        console.log("token not enabled yet")
+        return false
+    }
+    const query = `Token_id: ${data.key.nat} \nPrice: ${data.value.price} \nWallet: ${data.key.address} \nPress y to continue \n`
     const carryOn = await askContinue(query)
     return carryOn === "y";
 }
-
 
 function callContract(data) {
     tezos.contract
         .at('KT1AEVuykWeuuFX7QkEAMNtffzwhe1Z98hJS')
         .then((contract) => {
             return contract.methodsObject.mint({
-                issuer_address: data.author.id,
-                issuer_id: data.id,
-            }).send({amount: data.price, mutez: true, gasLimit: 100000})
+                issuer_address: data.key.address,
+                issuer_id: data.key.nat,
+            }).send({amount: data.value.price, mutez: true, gasLimit: 100000})
         }).then((op) => {
         console.log(`Awaiting for ${op.hash} to be confirmed...`);
         return op.confirmation().then(() => op.hash);
@@ -71,10 +65,10 @@ function callContract(data) {
         })
 }
 
-let data = await getTokenInfo(mintIndex)
-const doMint = await validateMint(data.generativeTokensByIds[0])
+const tokenInfo = await getTokenInfo(mintIndex)
+const doMint = await validateMint(tokenInfo)
 if (!doMint) {
     console.log("transaction canceled")
 } else {
-    callContract(data.generativeTokensByIds[0])
+    callContract(tokenInfo)
 }
