@@ -6,3 +6,4 @@ services:
     command: ["tail", "-f", "/dev/null"]
     environment:
       TEZOS_PKH: "$TEZOS_PKH"
+      TEZOS_RPC: "$TEZOS_RPC"

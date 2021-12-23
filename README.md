@@ -16,11 +16,13 @@
 ## run
 `npm install`
 
-`node hashsniper.js {issuer_address} {issuer id} {amount}`
+`node hs.js {mint_id}`
 
-`node hashsniper.js tz1McsuQc8hDd6uyJ6k6gjUJXB9jvb3YkEWU 1234 0.25`
+`node hs.js 5883`
+
+you will be prompted with the mint details, press y and enter to proceed or ctrl-c or any other letter and enter to cancel
 
 ## docker
 `docker-compose up -d`
 
-`docker exec hs node hashsniper.js {issuer_address} {issuer id} {amount}`
+`docker exec -it hs node hs.js {issuer id}`

@@ -3,7 +3,7 @@ import readline from "readline";
 import { TezosToolkit } from "@taquito/taquito";
 import { InMemorySigner } from "@taquito/signer";
 
-const rpc = process.env.TEZOS_RPC || "https://mainnet.smartpy.io"
+const rpc = process.env.TEZOS_RPC || "https://mainnet.api.tez.ie"
 const tezos = new TezosToolkit(rpc)
 tezos.setProvider({signer: await InMemorySigner.fromSecretKey(process.env.TEZOS_PKH)})
 const args = process.argv.slice(2)
@@ -52,7 +52,7 @@ function callContract(data) {
             return contract.methodsObject.mint({
                 issuer_address: data.key.address,
                 issuer_id: data.key.nat,
-            }).send({amount: data.value.price, mutez: true, gasLimit: 100000})
+            }).send({amount: data.value.price, mutez: true})
         }).then((op) => {
         console.log(`Awaiting for ${op.hash} to be confirmed...`);
         return op.confirmation().then(() => op.hash);
