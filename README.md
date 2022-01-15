@@ -12,6 +12,7 @@
 * wallet pkh
   * export your pkh from temple wallet under settings (use a burner wallet)
   * set env var `TEZOS_PKH` to the exported pkh
+  * set env var `TEZOS_RPC` for custom rpc node
 
 ## run
 `npm install`
@@ -22,7 +23,11 @@
 
 you will be prompted with the mint details, press y and enter to proceed or ctrl-c or any other letter and enter to cancel
 
+you can skip verification with 
+
+`node hs.js {mint_id} -y`
+
 ## docker
 `docker-compose up -d`
 
-`docker exec -it hs node hs.js {issuer id}`
+`docker exec -it hs node hs.js {mint id}`
