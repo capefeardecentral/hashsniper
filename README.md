@@ -1,5 +1,8 @@
 # hashsniper
 
+# NOT YET UPDATED FOR v1.0 of FXHASH
+# WILL NOT WORK CURRENTLY
+
 ## cli tool for buying fxhash pieces without worrying about ui issues
 
 ### This is a quick and easy script I have done minimal QA and testing.
